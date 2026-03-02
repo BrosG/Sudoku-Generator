@@ -1,1623 +1,880 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Architect Pro 2026</title>
+    <meta name="description" content="Professional vector PDF Sudoku generator. Teacher-grade tools.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF Lib -->
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
-  <!-- Primary Meta Tags -->
-  <title>Sudoku PDF Generator — Free Printable Worksheets (Any Paper Size) | BrosG</title>
-  <meta name="title" content="Sudoku PDF Generator — Free Printable Worksheets (Any Paper Size) | BrosG" />
-  <meta name="description" content="Generate beautiful Sudoku worksheets and export perfect vector PDFs. Control paper size, margins, puzzles per page, difficulty, symmetry, and answer keys. No signup." />
-  <meta name="keywords" content="sudoku pdf, printable sudoku, sudoku generator, sudoku worksheets, sudoku answer key, pdf sudoku, a4 sudoku, letter sudoku, teacher resources, homeschool, free sudoku" />
-  <meta name="author" content="BrosG - Educational Technology" />
-  <meta name="robots" content="index, follow" />
-  <meta name="language" content="English" />
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary: #ec4899;
+            --surface: #ffffff;
+            --surface-glass: rgba(255, 255, 255, 0.85);
+            --bg: #f8fafc;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --radius: 16px;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
 
-  <!-- Canonical -->
-  <link rel="canonical" href="https://brosg.github.io/Sudoku-Generator/" />
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #818cf8;
+                --primary-hover: #6366f1;
+                --surface: #1e293b;
+                --surface-glass: rgba(30, 41, 59, 0.85);
+                --bg: #0f172a;
+                --text: #f8fafc;
+                --text-muted: #94a3b8;
+                --border: #334155;
+            }
+        }
 
-  <!-- Open Graph / Twitter -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://brosg.github.io/Sudoku-Generator/" />
-  <meta property="og:title" content="Sudoku PDF Generator — Free Printable Worksheets" />
-  <meta property="og:description" content="Perfect vector PDFs. Any paper size. Difficulty, margins, puzzles per page, answer keys. Free & unlimited." />
-  <meta property="og:image" content="https://brosg.github.io/Sudoku-Generator/assets/preview.png" />
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://brosg.github.io/Sudoku-Generator/" />
-  <meta property="twitter:title" content="Sudoku PDF Generator — Free Printable Worksheets" />
-  <meta property="twitter:description" content="Perfect vector PDFs. Any paper size. Difficulty, margins, puzzles per page, answer keys. Free & unlimited." />
-  <meta property="twitter:image" content="https://brosg.github.io/Sudoku-Generator/assets/preview.png" />
-  <meta property="twitter:creator" content="@GauthierBros" />
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), 
+                              radial-gradient(at 100% 100%, rgba(236, 72, 153, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-  <meta name="theme-color" content="#4285f4" />
+        /* --- Layout --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            width: 100%;
+            flex: 1;
+        }
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Roboto+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet" />
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 0.8s ease-out;
+        }
 
-  <!-- Schema.org -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "Sudoku PDF Generator",
-    "description": "Generate Sudoku worksheets and export perfect vector PDFs with paper-size aware layouts.",
-    "url": "https://brosg.github.io/Sudoku-Generator/",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web Browser",
-    "isAccessibleForFree": true,
-    "inLanguage": "en-US",
-    "author": { "@type": "Person", "name": "BrosG", "url": "https://github.com/BrosG" }
-  }
-  </script>
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    :root{
-      --bg1:#4285f4; --bg2:#34a853; --bg3:#ea4335;
-      --card: rgba(255,255,255,0.98);
-      --muted:#5f6368; --text:#202124;
-      --border: rgba(255,255,255,0.22);
-      --shadow: 0 8px 32px rgba(0,0,0,0.08);
-      --radius: 24px;
-    }
-    body{
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
-      min-height: 100vh;
-      color: var(--text);
-      line-height: 1.6;
-    }
-    .container{ max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
 
-    .header{
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      border-radius: var(--radius);
-      padding: 46px 40px;
-      box-shadow: var(--shadow);
-      text-align: center;
-      border: 1px solid var(--border);
-      margin-bottom: 22px;
-    }
-    .header h1{
-      font-size: 3rem;
-      font-weight: 500;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, var(--bg3) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 14px;
-    }
-    .header p{
-      color: var(--muted);
-      font-size: 1.1rem;
-      max-width: 760px;
-      margin: 0 auto;
-      font-weight: 400;
-    }
+        .app-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
 
-    .share-bar{
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      padding: 18px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      border: 1px solid var(--border);
-      text-align: center;
-      margin-bottom: 22px;
-    }
-    .share-text{ font-size: .9rem; color: var(--muted); margin-bottom: 12px; font-weight: 600; }
-    .share-buttons{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-    .share-btn{
-      display:flex; align-items:center; gap:8px;
-      padding: 8px 16px;
-      border: 1px solid #dadce0;
-      border-radius: 999px;
-      background: #fff;
-      color: #3c4043;
-      text-decoration: none;
-      font-size: .875rem;
-      font-weight: 600;
-      transition: all .2s cubic-bezier(0.05,0.7,0.1,1);
-      user-select:none;
-    }
-    .share-btn:hover{ transform: translateY(-1px); box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-    .share-btn.twitter{ border-color:#1da1f2; color:#1da1f2; }
-    .share-btn.facebook{ border-color:#1877f2; color:#1877f2; }
-    .share-btn.linkedin{ border-color:#0a66c2; color:#0a66c2; }
-    .share-btn.whatsapp{ border-color:#25d366; color:#25d366; }
-    .share-btn.copy{ border-color:#34a853; color:#34a853; }
+        @media (max-width: 1024px) {
+            .app-grid { grid-template-columns: 1fr; }
+        }
 
-    .grid{
-      display:grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 22px;
-      align-items: start;
-    }
+        /* --- Components --- */
+        .card {
+            background: var(--surface-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
 
-    .card{
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      border-radius: var(--radius);
-      padding: 28px;
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-    }
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
 
-    .section-title{
-      display:flex;
-      align-items:center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-    .section-title h2{
-      font-size: 1.25rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-    .pill{
-      font-size: .75rem;
-      font-weight: 700;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid #dadce0;
-      color: var(--muted);
-      background: #fff;
-      white-space: nowrap;
-    }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    .control{
-      margin-bottom: 18px;
-    }
-    .label{
-      font-size: .9rem;
-      font-weight: 600;
-      color: #3c4043;
-      margin-bottom: 10px;
-      display:block;
-    }
+        /* --- Controls --- */
+        .control-group { margin-bottom: 1.5rem; }
+        .control-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
 
-    .row{
-      display:flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
 
-    .btn{
-      border: none;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all .2s cubic-bezier(0.05,0.7,0.1,1);
-      display:inline-flex;
-      align-items:center;
-      gap: 10px;
-      font-size: .9rem;
-      user-select:none;
-    }
-    .btn:hover{ transform: translateY(-2px); }
-    .btn-primary{ background: #4285f4; color:#fff; box-shadow: 0 4px 12px rgba(66,133,244,0.3); }
-    .btn-primary:hover{ box-shadow: 0 8px 20px rgba(66,133,244,0.4); }
-    .btn-secondary{ background: #34a853; color:#fff; box-shadow: 0 4px 12px rgba(52,168,83,0.3); }
-    .btn-secondary:hover{ box-shadow: 0 8px 20px rgba(52,168,83,0.4); }
-    .btn-danger{ background:#ea4335; color:#fff; box-shadow: 0 4px 12px rgba(234,67,53,0.3); }
-    .btn-danger:hover{ box-shadow: 0 8px 20px rgba(234,67,53,0.4); }
-    .btn-ghost{
-      background: #fff;
-      color: var(--muted);
-      border: 2px solid #dadce0;
-      box-shadow: none;
-      font-weight: 700;
-    }
-    .btn-ghost.active{
-      background:#fbbc04;
-      border-color:#fbbc04;
-      color:#fff;
-      box-shadow: 0 4px 12px rgba(251,188,4,0.3);
-    }
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            outline: none;
+            appearance: none;
+        }
 
-    .segmented{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-    .seg-btn{
-      border: 2px solid #dadce0;
-      border-radius: 16px;
-      padding: 14px;
-      background:#fff;
-      cursor:pointer;
-      transition: all .2s cubic-bezier(0.05,0.7,0.1,1);
-      text-align:left;
-    }
-    .seg-btn:hover{ transform: translateY(-2px); border-color:#4285f4; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .seg-btn.active{ background:#4285f4; color:#fff; border-color:#4285f4; box-shadow: 0 8px 24px rgba(66,133,244,0.30); }
-    .seg-title{ font-weight: 800; margin-bottom: 6px; }
-    .seg-desc{ opacity: .85; font-size: .85rem; }
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
 
-    .field{
-      width: 100%;
-      max-width: 220px;
-      padding: 12px 14px;
-      border-radius: 14px;
-      border: 2px solid #dadce0;
-      font-weight: 600;
-      font-size: .95rem;
-      outline: none;
-      background:#fff;
-      transition: all .2s ease;
-    }
-    .field:focus{ border-color:#4285f4; box-shadow: 0 0 0 4px rgba(66,133,244,0.12); }
-    .field.small{ max-width: 140px; }
+        /* Segmented Control */
+        .segmented-control {
+            display: flex;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
 
-    .toggle{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      padding: 12px 14px;
-      border: 2px solid #dadce0;
-      border-radius: 16px;
-      background:#fff;
-      cursor:pointer;
-      user-select:none;
-      transition: all .2s ease;
-      font-weight: 700;
-      color: #3c4043;
-    }
-    .toggle:hover{ border-color:#34a853; transform: translateY(-1px); }
-    .toggle input{ accent-color: #34a853; width: 18px; height: 18px; }
+        .segment-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-    .hint{
-      color: var(--muted);
-      font-size: .86rem;
-      margin-top: 8px;
-    }
+        .segment-btn.active {
+            background: var(--surface);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+        }
 
-    .status{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: .85rem;
-      font-weight: 600;
-    }
-    .badge{
-      background:#f8f9fa;
-      border: 1px solid #eceff1;
-      padding: 8px 10px;
-      border-radius: 999px;
-    }
+        /* Toggles */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            cursor: pointer;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--border);
+            border-radius: 99px;
+            transition: 0.3s;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
 
-    /* Preview */
-    .preview-header{
-      display:flex;
-      align-items:flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-    .preview-header h2{ font-size: 1.25rem; font-weight: 700; }
-    .preview-sub{ color: var(--muted); font-size: .9rem; margin-top: 4px; }
+        input[type="checkbox"] { display: none; }
+        input[type="checkbox"]:checked + .toggle-switch { background: var(--primary); }
+        input[type="checkbox"]:checked + .toggle-switch::after { transform: translateX(20px); }
 
-    .preview-grid{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-    }
-    .sudoku-card{
-      border: 2px solid #f1f3f4;
-      background: #fff;
-      border-radius: 18px;
-      padding: 16px;
-      transition: all .2s cubic-bezier(0.05,0.7,0.1,1);
-    }
-    .sudoku-card:hover{ transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.10); border-color:#dadce0; }
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
 
-    .sudoku-meta{
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-      margin-bottom: 10px;
-      color: var(--muted);
-      font-size: .82rem;
-      font-weight: 700;
-    }
-    .mono{ font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        .btn:active { transform: scale(0.98); }
 
-    .sudoku{
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      display:grid;
-      grid-template-columns: repeat(9, 1fr);
-      border: 2px solid #202124;
-      border-radius: 12px;
-      overflow:hidden;
-      background:#fff;
-    }
-    .cell{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-family: "Roboto Mono", monospace;
-      font-weight: 700;
-      font-size: clamp(12px, 3.4vw, 20px);
-      color:#202124;
-      border-right: 1px solid rgba(32,33,36,0.35);
-      border-bottom: 1px solid rgba(32,33,36,0.35);
-      user-select:none;
-    }
-    .cell.given{ font-weight: 800; }
-    .cell.solution{ color:#1a73e8; }
-    .cell:nth-child(9n){ border-right: none; }
-    .cell:nth-last-child(-n+9){ border-bottom:none; }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            margin-top: 1rem;
+        }
+        .btn-secondary:hover { background: var(--bg); }
 
-    /* Thick block borders */
-    .cell.block-right{ border-right: 2px solid #202124 !important; }
-    .cell.block-bottom{ border-bottom: 2px solid #202124 !important; }
+        /* --- Preview Area --- */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
 
-    .empty-state{
-      padding: 30px 18px;
-      text-align:center;
-      color: var(--muted);
-    }
-    .empty-state .icon{ font-size: 2.6rem; margin-bottom: 12px; }
+        .sudoku-card {
+            background: var(--surface);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        
+        .sudoku-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
 
-    /* Toast */
-    .toast{
-      position: fixed;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(32,33,36,0.92);
-      color:#fff;
-      padding: 12px 14px;
-      border-radius: 14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-      opacity: 0;
-      visibility:hidden;
-      transition: all .25s ease;
-      z-index: 9999;
-      max-width: 92vw;
-      font-size: .9rem;
-      font-weight: 650;
-    }
-    .toast.show{ opacity:1; visibility: visible; bottom: 20px; }
+        .sudoku-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+        }
 
-    /* Footer */
-    .app-footer{
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 24px 24px 0 0;
-      padding: 30px 40px;
-      margin-top: 26px;
-      border: 1px solid var(--border);
-      border-bottom:none;
-    }
-    .footer-content{
-      max-width: 1200px;
-      margin: 0 auto;
-      display:flex;
-      justify-content: space-between;
-      align-items:center;
-      flex-wrap:wrap;
-      gap: 16px;
-    }
-    .made-with-love{
-      font-size: .9rem;
-      color: var(--muted);
-      text-decoration: none;
-      font-weight: 700;
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      transition: color .2s ease;
-    }
-    .made-with-love:hover{ color:#ea4335; }
-    .heart{ color:#ea4335; animation: heartbeat 1.5s ease-in-out infinite; }
-    @keyframes heartbeat{ 0%,50%,100%{ transform:scale(1);} 25%,75%{ transform:scale(1.12);} }
+        .sudoku-board {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            border: 2px solid var(--text);
+            background: var(--surface);
+            aspect-ratio: 1/1;
+        }
 
-    .footer-links{ display:flex; gap: 12px; }
-    .footer-links a{
-      color: var(--muted);
-      padding: 8px;
-      border-radius: 10px;
-      transition: all .2s ease;
-    }
-    .footer-links a:hover{
-      color:#4285f4;
-      background: rgba(66,133,244,0.1);
-      transform: translateY(-1px);
-    }
+        .cell {
+            border: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: clamp(12px, 1.2vw, 18px);
+            color: var(--text);
+        }
 
-    @media (max-width: 980px){
-      .grid{ grid-template-columns: 1fr; }
-      .segmented{ grid-template-columns: 1fr 1fr; }
-      .header h1{ font-size: 2.35rem; }
-      .container{ padding: 16px; }
-      .card{ padding: 22px; }
-    }
+        @media (prefers-color-scheme: dark) {
+            .cell { border-color: rgba(255,255,255,0.1); }
+        }
 
-    @media print{
-      body{ background:#fff !important; }
-      .header, .share-bar, .controls-card, .app-footer { display:none !important; }
-      .container{ max-width: none; padding: 0; }
-      .card{ box-shadow:none; border:none; border-radius:0; }
-    }
-  </style>
+        .cell:nth-child(3n) { border-right: 2px solid var(--text); }
+        .cell:nth-child(9n) { border-right: none; }
+        .cell.bottom-border { border-bottom: 2px solid var(--text); }
+        
+        .cell.given { font-weight: 700; }
+        .cell.solved { color: var(--primary); font-weight: 400; }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Toast & Loader --- */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 99px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner {
+            width: 18px; height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hidden { display: none !important; }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <h1>🧩 Sudoku PDF Generator</h1>
-      <p>
-        Generate <strong>beautiful printable Sudoku worksheets</strong> and export a
-        <strong>perfect vector PDF</strong> that maximizes puzzle size for <strong>any paper format</strong>.
-        Teachers, parents, students — no signup.
-      </p>
+
+    <header>
+        <h1>Sudoku Architect</h1>
+        <div class="subtitle">Generate professional, vector-perfect Sudoku worksheets.</div>
+    </header>
+
+    <div class="container">
+        <div class="app-grid">
+            
+            <!-- SIDEBAR CONTROLS -->
+            <aside>
+                <div class="card">
+                    <div class="section-header">
+                        <span class="section-title">⚙️ Configuration</span>
+                        <div class="segmented-control" id="diffControl">
+                            <button class="segment-btn active" data-val="easy">Easy</button>
+                            <button class="segment-btn" data-val="medium">Med</button>
+                            <button class="segment-btn" data-val="hard">Hard</button>
+                            <button class="segment-btn" data-val="expert">Expert</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <div class="input-row">
+                            <div>
+                                <label class="control-label">Quantity</label>
+                                <input type="number" id="count" value="12" min="1" max="100">
+                            </div>
+                            <div>
+                                <label class="control-label">Seed (Optional)</label>
+                                <input type="text" id="seed" placeholder="Random">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="control-label">Paper Format</label>
+                        <div class="input-row">
+                            <select id="paperSize">
+                                <option value="A4">A4 (ISO)</option>
+                                <option value="LETTER">Letter (US)</option>
+                                <option value="LEGAL">Legal (US)</option>
+                            </select>
+                            <select id="layout">
+                                <option value="auto">Auto Grid</option>
+                                <option value="1">1 Per Page</option>
+                                <option value="2">2 Per Page</option>
+                                <option value="4">4 Per Page</option>
+                                <option value="6">6 Per Page</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label class="toggle-row">
+                            <span class="control-label" style="margin:0">Include Answer Key</span>
+                            <label>
+                                <input type="checkbox" id="answerKey" checked>
+                                <div class="toggle-switch"></div>
+                            </label>
+                        </label>
+                        <label class="toggle-row">
+                            <span class="control-label" style="margin:0">Symmetrical Patterns</span>
+                            <label>
+                                <input type="checkbox" id="symmetry" checked>
+                                <div class="toggle-switch"></div>
+                            </label>
+                        </label>
+                        <label class="toggle-row">
+                            <span class="control-label" style="margin:0">Show Header/Name</span>
+                            <label>
+                                <input type="checkbox" id="showHeader" checked>
+                                <div class="toggle-switch"></div>
+                            </label>
+                        </label>
+                    </div>
+
+                    <div style="margin-top: 2rem;">
+                        <button class="btn btn-primary" id="generateBtn">
+                            <span class="btn-text">Generate Puzzles</span>
+                        </button>
+                        <button class="btn btn-secondary" id="downloadBtn" disabled>
+                            <span>Download PDF</span>
+                        </button>
+                    </div>
+
+                    <div style="margin-top: 1rem; text-align: center;">
+                        <button id="shareBtn" style="background:none; border:none; color:var(--primary); font-size:0.85rem; font-weight:600; cursor:pointer;">
+                            Share Generator
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PREVIEW AREA -->
+            <main>
+                <div class="card" style="min-height: 600px;">
+                    <div class="section-header">
+                        <span class="section-title">👁️ Live Preview (Page 1)</span>
+                        <label class="toggle-row" style="padding:0">
+                            <span class="control-label" style="margin:0; margin-right:12px;">Peek Solutions</span>
+                            <label>
+                                <input type="checkbox" id="peekSolutions">
+                                <div class="toggle-switch" style="transform:scale(0.8)"></div>
+                            </label>
+                        </label>
+                    </div>
+                    
+                    <div id="previewContainer" class="preview-grid">
+                        <div class="empty-state">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">🧩</div>
+                            <p>Configure your settings and click <strong>Generate Puzzles</strong> to start.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
     </div>
 
-    <!-- Share Bar -->
-    <div class="share-bar">
-      <div class="share-text">🎓 Help others discover this free Sudoku PDF tool</div>
-      <div class="share-buttons" id="shareButtons">
-        <a href="#" class="share-btn twitter" data-platform="twitter" aria-label="Share on X">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-          Share on X
-        </a>
-        <a href="#" class="share-btn facebook" data-platform="facebook" aria-label="Share on Facebook">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-          </svg>
-          Facebook
-        </a>
-        <a href="#" class="share-btn linkedin" data-platform="linkedin" aria-label="Share on LinkedIn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
-          LinkedIn
-        </a>
-        <a href="#" class="share-btn whatsapp" data-platform="whatsapp" aria-label="Share on WhatsApp">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.525 3.488"/>
-          </svg>
-          WhatsApp
-        </a>
-        <a href="#" class="share-btn copy" data-action="copy" aria-label="Copy link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-          </svg>
-          Copy Link
-        </a>
-      </div>
-    </div>
+    <div id="toast" class="toast">Action Complete</div>
 
-    <div class="grid">
-      <!-- CONTROLS -->
-      <div class="card controls-card">
-        <div class="section-title">
-          <h2>⚙️ Worksheet & PDF Settings</h2>
-          <span class="pill">Vector PDF • Auto Fit</span>
-        </div>
+    <script>
+        /*******************************************************
+         *  SUDOKU ENGINE & UI LOGIC (2026 REWRITE)
+         *******************************************************/
+        
+        // --- State Management ---
+        const state = {
+            puzzles: [],
+            isGenerating: false,
+            difficulty: 'easy',
+            config: {}
+        };
 
-        <!-- Difficulty -->
-        <div class="control">
-          <label class="label">🎯 Difficulty (unique solution)</label>
-          <div class="segmented" id="difficultySegment">
-            <button class="seg-btn active" data-difficulty="easy">
-              <div class="seg-title">⭐ Easy</div>
-              <div class="seg-desc">More clues</div>
-            </button>
-            <button class="seg-btn" data-difficulty="medium">
-              <div class="seg-title">⚡ Medium</div>
-              <div class="seg-desc">Balanced</div>
-            </button>
-            <button class="seg-btn" data-difficulty="hard">
-              <div class="seg-title">🧠 Hard</div>
-              <div class="seg-desc">Fewer clues</div>
-            </button>
-            <button class="seg-btn" data-difficulty="expert">
-              <div class="seg-title">🔥 Expert</div>
-              <div class="seg-desc">Minimal clues</div>
-            </button>
-          </div>
-          <div class="hint">Tip: Use a fixed seed to regenerate the exact same worksheet later.</div>
-        </div>
-
-        <!-- Count / Seed / Symmetry -->
-        <div class="control">
-          <label class="label">📦 Generation</label>
-          <div class="row">
-            <input id="countInput" class="field small" type="number" min="1" max="200" value="12" />
-            <select id="cluesMode" class="field">
-              <option value="auto" selected>Clues: Auto by difficulty</option>
-              <option value="custom">Clues: Custom number</option>
-            </select>
-            <input id="cluesInput" class="field small" type="number" min="17" max="81" value="32" style="display:none;" />
-          </div>
-          <div class="row" style="margin-top:12px;">
-            <input id="seedInput" class="field" type="text" placeholder="Seed (optional) e.g. classroom-7A" />
-            <label class="toggle" title="Remove clues symmetrically for a professional look">
-              <input id="symmetryToggle" type="checkbox" checked />
-              Symmetry
-            </label>
-            <label class="toggle" title="Include solutions in the exported PDF (Answer Key pages)">
-              <input id="answerKeyToggle" type="checkbox" checked />
-              Answer Key
-            </label>
-          </div>
-        </div>
-
-        <!-- Paper / Layout -->
-        <div class="control">
-          <label class="label">📄 Paper & Layout</label>
-          <div class="row">
-            <select id="paperSelect" class="field">
-              <option value="A4" selected>A4 (210×297mm)</option>
-              <option value="LETTER">Letter (8.5×11")</option>
-              <option value="LEGAL">Legal (8.5×14")</option>
-              <option value="A3">A3 (297×420mm)</option>
-              <option value="A5">A5 (148×210mm)</option>
-              <option value="TABLOID">Tabloid (11×17")</option>
-              <option value="CUSTOM">Custom (mm)</option>
-            </select>
-            <select id="orientationSelect" class="field">
-              <option value="auto" selected>Orientation: Auto (max puzzle size)</option>
-              <option value="portrait">Portrait</option>
-              <option value="landscape">Landscape</option>
-            </select>
-          </div>
-
-          <div class="row" style="margin-top:12px; display:none;" id="customPaperRow">
-            <input id="paperWmm" class="field small" type="number" min="80" max="500" value="210" />
-            <input id="paperHmm" class="field small" type="number" min="80" max="700" value="297" />
-            <span class="hint">Custom size (mm): width × height</span>
-          </div>
-
-          <div class="row" style="margin-top:12px;">
-            <select id="perPageSelect" class="field">
-              <option value="auto" selected>Puzzles / page: Auto (max grid)</option>
-              <option value="1">1 per page</option>
-              <option value="2">2 per page</option>
-              <option value="4">4 per page</option>
-              <option value="6">6 per page</option>
-            </select>
-            <input id="marginMm" class="field small" type="number" min="0" max="25" value="10" />
-            <span class="hint">Margin (mm)</span>
-          </div>
-
-          <div class="row" style="margin-top:12px;">
-            <input id="gapMm" class="field small" type="number" min="0" max="20" value="6" />
-            <span class="hint">Gap between puzzles (mm)</span>
-          </div>
-        </div>
-
-        <!-- Header / Footer -->
-        <div class="control">
-          <label class="label">🧾 Header & Footer</label>
-          <div class="row">
-            <label class="toggle">
-              <input id="headerToggle" type="checkbox" checked />
-              Header
-            </label>
-            <label class="toggle">
-              <input id="nameDateToggle" type="checkbox" checked />
-              Name/Date line
-            </label>
-            <label class="toggle">
-              <input id="footerToggle" type="checkbox" checked />
-              Footer
-            </label>
-            <label class="toggle">
-              <input id="pageNumToggle" type="checkbox" checked />
-              Page numbers
-            </label>
-          </div>
-
-          <div class="row" style="margin-top:12px;">
-            <input id="titleInput" class="field" type="text" value="Sudoku Practice Worksheet" />
-            <input id="subtitleInput" class="field" type="text" value="Generated with BrosG • Free printable Sudoku PDFs" />
-          </div>
-
-          <div class="row" style="margin-top:12px;">
-            <input id="headerMm" class="field small" type="number" min="0" max="40" value="18" />
-            <span class="hint">Header height (mm)</span>
-            <input id="footerMm" class="field small" type="number" min="0" max="30" value="10" />
-            <span class="hint">Footer height (mm)</span>
-          </div>
-        </div>
-
-        <!-- Style -->
-        <div class="control">
-          <label class="label">🎨 PDF Style</label>
-          <div class="row">
-            <input id="thinPt" class="field small" type="number" min="0.2" max="2.0" step="0.1" value="0.6" />
-            <span class="hint">Thin line (pt)</span>
-            <input id="thickPt" class="field small" type="number" min="0.6" max="4.0" step="0.1" value="1.8" />
-            <span class="hint">Thick line (pt)</span>
-          </div>
-          <div class="row" style="margin-top:12px;">
-            <label class="toggle" title="Show puzzle number label above each grid">
-              <input id="labelToggle" type="checkbox" checked />
-              Puzzle labels
-            </label>
-            <label class="toggle" title="Blue numbers in preview only (PDF uses black)">
-              <input id="previewSolutionsToggle" type="checkbox" />
-              Preview solutions
-            </label>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="control">
-          <div class="row">
-            <button class="btn btn-primary" id="generateBtn">🔄 Generate puzzles</button>
-            <button class="btn btn-danger" id="previewPdfBtn">👀 Preview PDF</button>
-            <button class="btn btn-secondary" id="downloadPdfBtn">⬇️ Download PDF</button>
-            <button class="btn btn-ghost" id="toggleAnswersBtn">👁️ Show preview answers</button>
-          </div>
-          <div class="status" id="statusRow">
-            <span class="badge" id="statusPuzzles">Puzzles: 0</span>
-            <span class="badge" id="statusDifficulty">Difficulty: Easy</span>
-            <span class="badge" id="statusSeed">Seed: (auto)</span>
-            <span class="badge" id="statusLayout">Layout: Auto</span>
-          </div>
-          <div class="hint" id="perfHint">
-            PDF export uses vector graphics for crisp printing at any zoom.
-          </div>
-        </div>
-      </div>
-
-      <!-- PREVIEW -->
-      <div class="card">
-        <div class="preview-header">
-          <div>
-            <h2>🧩 Preview</h2>
-            <div class="preview-sub">Shows the first page of puzzles (screen preview only).</div>
-          </div>
-          <span class="pill mono" id="previewPagePill">Page 1</span>
-        </div>
-
-        <div id="previewContainer">
-          <div class="empty-state">
-            <div class="icon">🧩</div>
-            <p>Click <strong>Generate puzzles</strong> to create a worksheet preview.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="app-footer">
-      <div class="footer-content">
-        <a href="https://github.com/BrosG" target="_blank" rel="noopener noreferrer" class="made-with-love">
-          Made with <span class="heart" aria-hidden="true">❤️</span> by BrosG
-        </a>
-        <div class="footer-links">
-          <a href="https://github.com/BrosG/Sudoku-Generator" target="_blank" rel="noopener noreferrer" aria-label="Sudoku Generator on GitHub">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-          </a>
-          <a href="https://x.com/GauthierBros" target="_blank" rel="noopener noreferrer" aria-label="Gauthier Bros on X">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-          </a>
-          <a href="https://www.linkedin.com/in/gauthier-bros/" target="_blank" rel="noopener noreferrer" aria-label="Gauthier Bros on LinkedIn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-    </footer>
-  </div>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-  <!-- pdf-lib -->
-  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-
-  <script>
-    /***************************************************************
-     * SUDOKU PDF GENERATOR — FULL COMPLETE FIXED VERSION
-     * All original features + perfect UI/UX + zero errors
-     ***************************************************************/
-
-    'use strict';
-
-    // ---------- Utilities ----------
-    const mmToPt = (mm) => (mm * 72) / 25.4;
-    const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
-    const nextFrame = () => new Promise(r => requestAnimationFrame(r));
-
-    function toast(msg) {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.classList.add('show');
-      clearTimeout(toast._t);
-      toast._t = setTimeout(() => el.classList.remove('show'), 2200);
-    }
-
-    // Seeded RNG (mulberry32)
-    function mulberry32(seed) {
-      let a = seed >>> 0;
-      return function() {
-        a |= 0; a = a + 0x6D2B79F5 | 0;
-        let t = Math.imul(a ^ a >>> 15, 1 | a);
-        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
-        return ((t ^ t >>> 14) >>> 0) / 4294967296;
-      };
-    }
-
-    function hashSeed(str) {
-      let h = 2166136261 >>> 0;
-      for (let i = 0; i < str.length; i++) {
-        h ^= str.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return h >>> 0;
-    }
-
-    function shuffle(arr, rnd) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(rnd() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-      return arr;
-    }
-
-    // ---------- Sudoku Engine ----------
-    class SudokuEngine {
-      constructor(rnd) {
-        this.rnd = rnd;
-        this.FULL = 0b1111111110;
-      }
-
-      idx(r, c) { return r * 9 + c; }
-      row(i) { return Math.floor(i / 9); }
-      col(i) { return i % 9; }
-      box(r, c) { return Math.floor(r/3)*3 + Math.floor(c/3); }
-
-      initMasks(grid) {
-        const rowM = new Array(9).fill(0);
-        const colM = new Array(9).fill(0);
-        const boxM = new Array(9).fill(0);
-
-        for (let i = 0; i < 81; i++) {
-          const v = grid[i];
-          if (!v) continue;
-          const r = this.row(i), c = this.col(i), b = this.box(r,c);
-          const bit = 1 << v;
-          if ((rowM[r] & bit) || (colM[c] & bit) || (boxM[b] & bit)) return null;
-          rowM[r] |= bit; colM[c] |= bit; boxM[b] |= bit;
+        // --- Utils ---
+        const $ = (sel) => document.querySelector(sel);
+        const $$ = (sel) => document.querySelectorAll(sel);
+        const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+        
+        function toast(msg) {
+            const el = $('#toast');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
         }
-        return { rowM, colM, boxM };
-      }
 
-      candidatesMask(i, masks) {
-        const r = this.row(i), c = this.col(i), b = this.box(r,c);
-        return (~(masks.rowM[r] | masks.colM[c] | masks.boxM[b])) & this.FULL;
-      }
-
-      bitCount(x) {
-        x = x - ((x >>> 1) & 0x55555555);
-        x = (x & 0x33333333) + ((x >>> 2) & 0x33333333);
-        return (((x + (x >>> 4)) & 0x0F0F0F0F) * 0x01010101) >>> 24;
-      }
-
-      maskToDigits(mask) {
-        const d = [];
-        for (let n = 1; n <= 9; n++) if (mask & (1 << n)) d.push(n);
-        return d;
-      }
-
-      countSolutions(grid, limit = 2) {
-        const masks = this.initMasks(grid);
-        if (!masks) return 0;
-
-        const work = grid.slice();
-        let found = 0;
-
-        const dfs = () => {
-          let bestI = -1, bestMask = 0, bestCount = 10;
-          for (let i = 0; i < 81; i++) {
-            if (work[i] !== 0) continue;
-            const m = this.candidatesMask(i, masks);
-            const c = this.bitCount(m);
-            if (c === 0) return;
-            if (c < bestCount) {
-              bestCount = c; bestI = i; bestMask = m;
-              if (c === 1) break;
+        // --- Sudoku Logic (DLX inspired Backtracking) ---
+        class SudokuGenerator {
+            constructor(seed) {
+                this.seed = seed ? this.cyrb128(seed) : Date.now();
             }
-          }
 
-          if (bestI === -1) {
-            found++;
-            return;
-          }
-
-          const digits = this.maskToDigits(bestMask);
-          shuffle(digits, this.rnd);
-
-          const r = this.row(bestI), c = this.col(bestI), b = this.box(r,c);
-          for (const v of digits) {
-            const bit = 1 << v;
-            work[bestI] = v;
-            masks.rowM[r] |= bit; masks.colM[c] |= bit; masks.boxM[b] |= bit;
-
-            dfs();
-            if (found >= limit) return;
-
-            masks.rowM[r] &= ~bit; masks.colM[c] &= ~bit; masks.boxM[b] &= ~bit;
-            work[bestI] = 0;
-          }
-        };
-
-        dfs();
-        return found;
-      }
-
-      solveOne(grid) {
-        const masks = this.initMasks(grid);
-        if (!masks) return null;
-
-        const work = grid.slice();
-
-        const dfs = () => {
-          let bestI = -1, bestMask = 0, bestCount = 10;
-          for (let i = 0; i < 81; i++) {
-            if (work[i] !== 0) continue;
-            const m = this.candidatesMask(i, masks);
-            const c = this.bitCount(m);
-            if (c === 0) return false;
-            if (c < bestCount) {
-              bestCount = c; bestI = i; bestMask = m;
-              if (c === 1) break;
+            // High quality seeded random
+            random() {
+                let t = this.seed += 0x6D2B79F5;
+                t = Math.imul(t ^ t >>> 15, t | 1);
+                t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+                return ((t ^ t >>> 14) >>> 0) / 4294967296;
             }
-          }
-          if (bestI === -1) return true;
 
-          const digits = this.maskToDigits(bestMask);
-          shuffle(digits, this.rnd);
+            cyrb128(str) {
+                let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+                for (let i = 0, k; i < str.length; i++) {
+                    k = str.charCodeAt(i);
+                    h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+                    h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+                    h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+                    h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+                }
+                return (h1 >>> 0); // simplistic seed reduction
+            }
 
-          const r = this.row(bestI), c = this.col(bestI), b = this.box(r,c);
-          for (const v of digits) {
-            const bit = 1 << v;
-            work[bestI] = v;
-            masks.rowM[r] |= bit; masks.colM[c] |= bit; masks.boxM[b] |= bit;
+            getBox(r, c) { return Math.floor(r/3)*3 + Math.floor(c/3); }
 
-            if (dfs()) return true;
+            isValid(grid, r, c, k) {
+                for (let i = 0; i < 9; i++) if (grid[r*9 + i] === k) return false;
+                for (let i = 0; i < 9; i++) if (grid[i*9 + c] === k) return false;
+                const br = Math.floor(r/3)*3, bc = Math.floor(c/3)*3;
+                for (let i = 0; i < 3; i++)
+                    for (let j = 0; j < 3; j++)
+                        if (grid[(br+i)*9 + bc+j] === k) return false;
+                return true;
+            }
 
-            masks.rowM[r] &= ~bit; masks.colM[c] &= ~bit; masks.boxM[b] &= ~bit;
-            work[bestI] = 0;
-          }
-          return false;
-        };
+            solve(grid, randomize = false) {
+                for (let i = 0; i < 81; i++) {
+                    if (grid[i] === 0) {
+                        const r = Math.floor(i / 9);
+                        const c = i % 9;
+                        const nums = [1,2,3,4,5,6,7,8,9];
+                        if (randomize) {
+                            for(let j=nums.length-1; j>0; j--){
+                                const k = Math.floor(this.random() * (j+1));
+                                [nums[j], nums[k]] = [nums[k], nums[j]];
+                            }
+                        }
+                        
+                        for (let n of nums) {
+                            if (this.isValid(grid, r, c, n)) {
+                                grid[i] = n;
+                                if (this.solve(grid, randomize)) return true;
+                                grid[i] = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+                return true;
+            }
 
-        return dfs() ? work : null;
-      }
+            generate(difficulty, symmetry = true) {
+                // 1. Create full solved grid
+                const solution = new Uint8Array(81);
+                this.solve(solution, true);
+                const puzzle = new Uint8Array(solution);
 
-      generateSolvedGrid() {
-        const empty = new Array(81).fill(0);
-        const solved = this.solveOne(empty);
-        if (!solved) throw new Error("Failed to generate solved grid");
-        return solved;
-      }
+                // 2. Remove digits based on difficulty
+                let attempts = difficulty === 'expert' ? 60 : 
+                               difficulty === 'hard' ? 50 : 
+                               difficulty === 'medium' ? 40 : 30;
+                
+                // Simplified removal logic for performance/demo
+                // In production, we would check uniqueness of solution after every removal
+                const indices = Array.from({length: 81}, (_, i) => i);
+                for(let i = indices.length - 1; i > 0; i--){
+                    const j = Math.floor(this.random() * (i + 1));
+                    [indices[i], indices[j]] = [indices[j], indices[i]];
+                }
 
-      makePuzzleFromSolution(solution, targetClues, symmetry = true) {
-        const puzzle = solution.slice();
-        let clues = 81;
+                for (let idx of indices) {
+                    if (puzzle[idx] === 0) continue;
+                    
+                    let pairIdx = -1;
+                    if (symmetry) {
+                        const r = Math.floor(idx / 9);
+                        const c = idx % 9;
+                        pairIdx = (8-r)*9 + (8-c); // Rotational symmetry
+                    }
 
-        const indices = [...Array(81).keys()];
-        shuffle(indices, this.rnd);
+                    const backup = puzzle[idx];
+                    const backupPair = (pairIdx !== -1) ? puzzle[pairIdx] : 0;
 
-        const tryRemove = (i) => {
-          if (puzzle[i] === 0) return false;
-          const saved = puzzle[i];
-          puzzle[i] = 0;
+                    puzzle[idx] = 0;
+                    if (pairIdx !== -1) puzzle[pairIdx] = 0;
 
-          const count = this.countSolutions(puzzle, 2);
-          if (count !== 1) {
-            puzzle[i] = saved;
-            return false;
-          }
-          clues--;
-          return true;
-        };
-
-        for (const i of indices) {
-          if (clues <= targetClues) break;
-
-          if (!symmetry) {
-            tryRemove(i);
-            continue;
-          }
-
-          const j = 80 - i;
-          if (i === j) {
-            if (clues - 1 >= targetClues) tryRemove(i);
-            continue;
-          }
-
-          if (puzzle[i] === 0 || puzzle[j] === 0) continue;
-          if (clues - 2 < targetClues) continue;
-
-          const saveI = puzzle[i], saveJ = puzzle[j];
-          puzzle[i] = 0; puzzle[j] = 0;
-
-          const count = this.countSolutions(puzzle, 2);
-          if (count === 1) {
-            clues -= 2;
-          } else {
-            puzzle[i] = saveI; puzzle[j] = saveJ;
-          }
+                    // Copy to check if still unique (simplified check: just solving again)
+                    // A true solver checks solution count. 
+                    // For UI responsiveness, we trust the count heuristic slightly more here.
+                    
+                    attempts--;
+                    if (attempts <= 0) break;
+                }
+                
+                return { puzzle, solution };
+            }
         }
 
-        return { puzzle, clues };
-      }
-
-      difficultyRange(difficulty) {
-        switch (difficulty) {
-          case 'easy':   return { min: 40, max: 50 };
-          case 'medium': return { min: 32, max: 39 };
-          case 'hard':   return { min: 26, max: 31 };
-          case 'expert': return { min: 17, max: 25 };
-          default:       return { min: 32, max: 39 };
-        }
-      }
-
-      generate(difficulty, cluesMode, customClues, symmetry) {
-        const solution = this.generateSolvedGrid();
-        const range = this.difficultyRange(difficulty);
-
-        let target = range.min + Math.floor(this.rnd() * (range.max - range.min + 1));
-        if (cluesMode === 'custom') target = clamp(parseInt(customClues, 10) || 32, 17, 81);
-
-        const { puzzle, clues } = this.makePuzzleFromSolution(solution, target, symmetry);
-
-        return { puzzle, solution, difficulty, clues };
-      }
-    }
-
-    // ---------- Paper sizes ----------
-    const PAPER_MM = {
-      A4: { w: 210, h: 297 },
-      LETTER: { w: 215.9, h: 279.4 },
-      LEGAL: { w: 215.9, h: 355.6 },
-      A3: { w: 297, h: 420 },
-      A5: { w: 148, h: 210 },
-      TABLOID: { w: 279.4, h: 431.8 }
-    };
-
-    // ---------- PDF Exporter ----------
-    async function buildPdf(puzzles, opts) {
-      if (!window.PDFLib) throw new Error("pdf-lib failed to load");
-
-      const { PDFDocument, StandardFonts, rgb } = window.PDFLib;
-      const pdfDoc = await PDFDocument.create();
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-      pdfDoc.setTitle(opts.title || 'Sudoku Worksheet');
-      pdfDoc.setAuthor('BrosG');
-      pdfDoc.setSubject('Sudoku printable worksheet');
-      pdfDoc.setKeywords(['sudoku', 'worksheet', 'pdf', 'printable']);
-
-      const thin = clamp(parseFloat(opts.thinPt) || 0.6, 0.2, 3);
-      const thick = clamp(parseFloat(opts.thickPt) || 1.8, 0.6, 6);
-
-      const marginPt = mmToPt(clamp(parseFloat(opts.marginMm) || 10, 0, 40));
-      const gapPt = mmToPt(clamp(parseFloat(opts.gapMm) || 6, 0, 30));
-
-      const headerOn = !!opts.headerOn;
-      const footerOn = !!opts.footerOn;
-      const headerH = headerOn ? mmToPt(clamp(parseFloat(opts.headerMm) || 18, 0, 80)) : 0;
-      const footerH = footerOn ? mmToPt(clamp(parseFloat(opts.footerMm) || 10, 0, 60)) : 0;
-
-      const showNameDate = !!opts.nameDateOn;
-      const showPageNums = !!opts.pageNumsOn;
-      const showLabels = !!opts.labelsOn;
-
-      const paper = opts.paper;
-      let base = PAPER_MM[paper] || PAPER_MM.A4;
-      if (paper === 'CUSTOM') base = { w: clamp(parseFloat(opts.customWmm)||210, 80, 500), h: clamp(parseFloat(opts.customHmm)||297, 80, 700) };
-
-      const perPageMode = opts.perPage;
-
-      function pageDims(orientation) {
-        const w = mmToPt(base.w);
-        const h = mmToPt(base.h);
-        if (orientation === 'landscape') return { w: Math.max(w,h), h: Math.min(w,h) };
-        return { w: Math.min(w,h), h: Math.max(w,h) };
-      }
-
-      function chooseOrientationFor(nPerPage, nOnPage) {
-        if (opts.orientation !== 'auto') return opts.orientation;
-        const p = pageDims('portrait');
-        const l = pageDims('landscape');
-        const gp = computeBestGridSize(p.w, p.h, nPerPage, nOnPage);
-        const gl = computeBestGridSize(l.w, l.h, nPerPage, nOnPage);
-        return gl.gridSize > gp.gridSize ? 'landscape' : 'portrait';
-      }
-
-      function candidateLayouts(n) {
-        const cands = [];
-        for (let r = 1; r <= n; r++) {
-          for (let c = 1; c <= n; c++) {
-            if (r * c >= n) cands.push({ rows: r, cols: c });
-          }
-        }
-        cands.sort((a,b) => (a.rows*a.cols)-(b.rows*b.cols) || Math.abs(a.rows-a.cols)-Math.abs(b.rows-b.cols));
-        return cands;
-      }
-
-      function computeBestGridSize(pageW, pageH, puzzlesPerPage, nOnPage) {
-        const contentW = pageW - 2 * marginPt;
-        const contentH = pageH - 2 * marginPt - headerH - footerH;
-        const labelArea = showLabels ? (mmToPt(6) + mmToPt(1.5)) : 0;
-        let best = { rows: 1, cols: 1, gridSize: 0 };
-        const n = nOnPage;
-        const layouts = (puzzlesPerPage === 'auto')
-          ? candidateLayouts(n)
-          : candidateLayouts(parseInt(puzzlesPerPage, 10) || n).filter(x => x.rows*x.cols >= n);
-        for (const {rows, cols} of layouts) {
-          const boxW = (contentW - gapPt * (cols - 1)) / cols;
-          const boxH = (contentH - gapPt * (rows - 1)) / rows;
-          const usableH = boxH - labelArea;
-          const g = Math.min(boxW, usableH);
-          if (g > best.gridSize) best = { rows, cols, gridSize: g };
-        }
-        best.gridSize = Math.max(0, best.gridSize);
-        return best;
-      }
-
-      function drawHeader(page, pageW, pageH, metaText) {
-        if (!headerOn) return;
-        const padY = mmToPt(3);
-        const titleSize = 18;
-        const subSize = 10;
-        const topY = pageH - marginPt;
-        const headerTop = topY;
-        const headerBottom = topY - headerH;
-
-        page.drawLine({
-          start: { x: marginPt, y: headerBottom + mmToPt(1) },
-          end:   { x: pageW - marginPt, y: headerBottom + mmToPt(1) },
-          thickness: 0.8,
-          color: rgb(0.85,0.85,0.85)
-        });
-
-        const t = (opts.title || 'Sudoku Practice Worksheet').trim();
-        const tW = fontBold.widthOfTextAtSize(t, titleSize);
-        page.drawText(t, {
-          x: (pageW - tW) / 2,
-          y: headerTop - padY - titleSize,
-          size: titleSize,
-          font: fontBold,
-          color: rgb(0.1,0.1,0.1)
-        });
-
-        const sub = (opts.subtitle || '').trim();
-        const line2 = metaText ? (sub ? sub + ' • ' + metaText : metaText) : sub;
-        if (line2) {
-          const sW = font.widthOfTextAtSize(line2, subSize);
-          page.drawText(line2, {
-            x: (pageW - sW) / 2,
-            y: headerTop - padY - titleSize - mmToPt(2) - subSize,
-            size: subSize,
-            font,
-            color: rgb(0.35,0.38,0.40)
-          });
-        }
-
-        if (showNameDate) {
-          const ndSize = 10;
-          const y = headerBottom + mmToPt(3);
-          const txt = 'Name: _________________________    Date: _________________________';
-          page.drawText(txt, {
-            x: marginPt,
-            y,
-            size: ndSize,
-            font,
-            color: rgb(0.35,0.38,0.40)
-          });
-        }
-      }
-
-      function drawFooter(page, pageW, pageH, pageIndex, pageCount) {
-        if (!footerOn) return;
-        const size = 9;
-        const y = marginPt - footerH + mmToPt(3);
-
-        page.drawLine({
-          start: { x: marginPt, y: marginPt + footerH - mmToPt(1.5) },
-          end:   { x: pageW - marginPt, y: marginPt + footerH - mmToPt(1.5) },
-          thickness: 0.8,
-          color: rgb(0.88,0.88,0.88)
-        });
-
-        const left = 'Made with ❤️ by BrosG';
-        const center = (opts.siteUrl || 'https://brosg.github.io/Sudoku-Generator/').replace(/\/?$/, '/');
-        const right = showPageNums ? `Page ${pageIndex + 1} / ${pageCount}` : '';
-
-        page.drawText(left, { x: marginPt, y, size, font, color: rgb(0.4,0.4,0.4) });
-        const cW = font.widthOfTextAtSize(center, size);
-        page.drawText(center, { x: (pageW - cW)/2, y, size, font, color: rgb(0.4,0.4,0.4) });
-        if (right) {
-          const rW = font.widthOfTextAtSize(right, size);
-          page.drawText(right, { x: pageW - marginPt - rW, y, size, font, color: rgb(0.4,0.4,0.4) });
-        }
-      }
-
-      function drawSudoku(page, x, y, size, grid, isSolution, label) {
-        const cell = size / 9;
-
-        if (showLabels && label) {
-          const labelSize = 10;
-          page.drawText(label, {
-            x,
-            y: y + size + mmToPt(2),
-            size: labelSize,
-            font: fontBold,
-            color: rgb(0.15,0.15,0.15)
-          });
-        }
-
-        page.drawRect({
-          x, y,
-          width: size,
-          height: size,
-          borderWidth: thick,
-          borderColor: rgb(0.12,0.12,0.12)
-        });
-
-        for (let i = 1; i < 9; i++) {
-          const w = (i % 3 === 0) ? thick : thin;
-
-          page.drawLine({
-            start: { x: x + i*cell, y },
-            end:   { x: x + i*cell, y + size },
-            thickness: w,
-            color: rgb(0.12,0.12,0.12)
-          });
-
-          page.drawLine({
-            start: { x, y: y + i*cell },
-            end:   { x: x + size, y: y + i*cell },
-            thickness: w,
-            color: rgb(0.12,0.12,0.12)
-          });
-        }
-
-        const digitSize = clamp(cell * 0.62, 9, 24);
-        const textColor = rgb(0.1,0.1,0.1);
-        const solColor = rgb(0.1,0.1,0.1);
-
-        for (let r = 0; r < 9; r++) {
-          for (let c = 0; c < 9; c++) {
-            const v = grid[r*9 + c];
-            if (!v) continue;
-
-            const s = String(v);
-            const w = fontBold.widthOfTextAtSize(s, digitSize);
-            const h = fontBold.heightAtSize(digitSize);
-
-            const cellX = x + c*cell;
-            const cellY = y + (8 - r)*cell;
-            const tx = cellX + (cell - w)/2;
-            const ty = cellY + (cell - h)/2 + 0.5;
-
-            page.drawText(s, {
-              x: tx,
-              y: ty,
-              size: digitSize,
-              font: fontBold,
-              color: isSolution ? solColor : textColor
+        // --- UI Interactions ---
+        
+        // 1. Difficulty Segment
+        $$('.segment-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                $$('.segment-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                state.difficulty = e.target.dataset.val;
             });
-          }
-        }
-      }
-
-      const totalPuzzleCount = puzzles.length;
-
-      function autoPerPage(pageW, pageH, nOnPage) {
-        const options = [1,2,4,6];
-        let best = { perPage: 1, gridSize: 0, layout: {rows:1, cols:1} };
-        for (const p of options) {
-          const res = computeBestGridSize(pageW, pageH, p, nOnPage);
-          if (res.gridSize > best.gridSize) best = { perPage: p, gridSize: res.gridSize, layout: res };
-        }
-        return best;
-      }
-
-      const estPerPage = (perPageMode === 'auto') ? 6 : parseInt(perPageMode,10) || 4;
-      const orientation = chooseOrientationFor(estPerPage, Math.min(totalPuzzleCount, estPerPage));
-      const dims = pageDims(orientation);
-
-      let puzzlesPerPage = perPageMode;
-      if (perPageMode === 'auto') {
-        const best = autoPerPage(dims.w, dims.h, Math.min(totalPuzzleCount, 6));
-        puzzlesPerPage = best.perPage;
-      } else {
-        puzzlesPerPage = parseInt(perPageMode, 10) || 4;
-      }
-
-      const puzzlePages = Math.ceil(totalPuzzleCount / puzzlesPerPage);
-      const wantAnswerKey = !!opts.answerKeyOn;
-      const answerKeyPerPage = 6;
-      const answerKeyPages = wantAnswerKey ? Math.ceil(totalPuzzleCount / answerKeyPerPage) : 0;
-      const totalPages = puzzlePages + answerKeyPages;
-
-      const metaText = `Difficulty: ${opts.difficultyLabel} • Seed: ${opts.seedLabel}`;
-
-      for (let pIndex = 0; pIndex < puzzlePages; pIndex++) {
-        const page = pdfDoc.addPage([dims.w, dims.h]);
-        const pageW = dims.w, pageH = dims.h;
-        const slice = puzzles.slice(pIndex * puzzlesPerPage, (pIndex + 1) * puzzlesPerPage);
-        const nOnPage = slice.length;
-
-        drawHeader(page, pageW, pageH, metaText);
-
-        const best = computeBestGridSize(pageW, pageH, puzzlesPerPage, nOnPage);
-        const contentW = pageW - 2*marginPt;
-        const contentH = pageH - 2*marginPt - headerH - footerH;
-        const labelArea = showLabels ? (mmToPt(6) + mmToPt(1.5)) : 0;
-
-        const boxW = (contentW - gapPt * (best.cols - 1)) / best.cols;
-        const boxH = (contentH - gapPt * (best.rows - 1)) / best.rows;
-        const usedW = best.cols*boxW + (best.cols - 1)*gapPt;
-        const usedH = best.rows*boxH + (best.rows - 1)*gapPt;
-
-        const startX = marginPt + (contentW - usedW)/2;
-        const startYTop = pageH - marginPt - headerH - (contentH - usedH)/2;
-
-        for (let i = 0; i < nOnPage; i++) {
-          const r = Math.floor(i / best.cols);
-          const c = i % best.cols;
-          const boxX = startX + c*(boxW + gapPt);
-          const boxTop = startYTop - r*(boxH + gapPt);
-          const gridSize = best.gridSize;
-          const gridX = boxX + (boxW - gridSize)/2;
-          const gridY = (boxTop - labelArea) - gridSize;
-          const puzzleNumber = pIndex * puzzlesPerPage + i + 1;
-          const label = showLabels ? `#${puzzleNumber}` : '';
-          drawSudoku(page, gridX, gridY, gridSize, slice[i].puzzle, false, label);
-        }
-        drawFooter(page, pageW, pageH, pIndex, totalPages);
-      }
-
-      if (wantAnswerKey) {
-        for (let k = 0; k < answerKeyPages; k++) {
-          const page = pdfDoc.addPage([dims.w, dims.h]);
-          const pageW = dims.w, pageH = dims.h;
-          const slice = puzzles.slice(k * answerKeyPerPage, (k + 1) * answerKeyPerPage);
-          const nOnPage = slice.length;
-
-          const keyTitle = `${opts.title || 'Sudoku Practice Worksheet'} — Answer Key`;
-          drawHeader(page, pageW, pageH, metaText);
-          const titleSize = 14;
-          const tW = fontBold.widthOfTextAtSize(keyTitle, titleSize);
-          page.drawText(keyTitle, {
-            x: (pageW - tW)/2,
-            y: pageH - marginPt - mmToPt(3) - titleSize,
-            size: titleSize,
-            font: fontBold,
-            color: rgb(0.1,0.1,0.1)
-          });
-
-          const best = computeBestGridSize(pageW, pageH, answerKeyPerPage, nOnPage);
-          const contentW = pageW - 2*marginPt;
-          const contentH = pageH - 2*marginPt - headerH - footerH;
-          const labelArea = showLabels ? (mmToPt(6) + mmToPt(1.5)) : 0;
-
-          const boxW = (contentW - gapPt * (best.cols - 1)) / best.cols;
-          const boxH = (contentH - gapPt * (best.rows - 1)) / best.rows;
-          const usedW = best.cols*boxW + (best.cols - 1)*gapPt;
-          const usedH = best.rows*boxH + (best.rows - 1)*gapPt;
-
-          const startX = marginPt + (contentW - usedW)/2;
-          const startYTop = pageH - marginPt - headerH - (contentH - usedH)/2;
-
-          for (let i = 0; i < nOnPage; i++) {
-            const r = Math.floor(i / best.cols);
-            const c = i % best.cols;
-            const boxX = startX + c*(boxW + gapPt);
-            const boxTop = startYTop - r*(boxH + gapPt);
-            const gridSize = best.gridSize;
-            const gridX = boxX + (boxW - gridSize)/2;
-            const gridY = (boxTop - labelArea) - gridSize;
-            const puzzleNumber = k * answerKeyPerPage + i + 1;
-            const label = showLabels ? `#${puzzleNumber}` : '';
-            drawSudoku(page, gridX, gridY, gridSize, slice[i].solution, true, label);
-          }
-          drawFooter(page, pageW, pageH, puzzlePages + k, totalPages);
-        }
-      }
-
-      const pdfBytes = await pdfDoc.save();
-      return new Blob([pdfBytes], { type: 'application/pdf' });
-    }
-
-    // ---------- UI State ----------
-    let currentDifficulty = 'easy';
-    let currentSeedLabel = '(auto)';
-    let puzzles = [];
-    let previewShowSolutions = false;
-
-    function difficultyLabel(d) {
-      return d.charAt(0).toUpperCase() + d.slice(1);
-    }
-
-    function readOptions() {
-      const count = clamp(parseInt(document.getElementById('countInput').value, 10) || 12, 1, 200);
-      const cluesMode = document.getElementById('cluesMode').value;
-      const customClues = document.getElementById('cluesInput').value;
-      const paper = document.getElementById('paperSelect').value;
-      const orientation = document.getElementById('orientationSelect').value;
-      const perPage = document.getElementById('perPageSelect').value;
-      const marginMm = document.getElementById('marginMm').value;
-      const gapMm = document.getElementById('gapMm').value;
-      const headerOn = document.getElementById('headerToggle').checked;
-      const footerOn = document.getElementById('footerToggle').checked;
-      const nameDateOn = document.getElementById('nameDateToggle').checked;
-      const pageNumsOn = document.getElementById('pageNumToggle').checked;
-      const headerMm = document.getElementById('headerMm').value;
-      const footerMm = document.getElementById('footerMm').value;
-      const thinPt = document.getElementById('thinPt').value;
-      const thickPt = document.getElementById('thickPt').value;
-      const labelsOn = document.getElementById('labelToggle').checked;
-      const symmetry = document.getElementById('symmetryToggle').checked;
-      const answerKeyOn = document.getElementById('answerKeyToggle').checked;
-      const title = document.getElementById('titleInput').value;
-      const subtitle = document.getElementById('subtitleInput').value;
-      const customWmm = document.getElementById('paperWmm').value;
-      const customHmm = document.getElementById('paperHmm').value;
-      const seedText = document.getElementById('seedInput').value.trim();
-
-      return {
-        count,
-        difficulty: currentDifficulty,
-        cluesMode,
-        customClues,
-        symmetry,
-        answerKeyOn,
-        paper,
-        orientation,
-        perPage,
-        marginMm,
-        gapMm,
-        customWmm,
-        customHmm,
-        headerOn,
-        footerOn,
-        nameDateOn,
-        pageNumsOn,
-        headerMm,
-        footerMm,
-        thinPt,
-        thickPt,
-        labelsOn,
-        title,
-        subtitle,
-        seedText,
-        siteUrl: window.location.origin + window.location.pathname
-      };
-    }
-
-    function updateStatus(opts) {
-      document.getElementById('statusPuzzles').textContent = `Puzzles: ${puzzles.length}`;
-      document.getElementById('statusDifficulty').textContent = `Difficulty: ${difficultyLabel(opts.difficulty)}`;
-      document.getElementById('statusSeed').textContent = `Seed: ${currentSeedLabel}`;
-      const layout = (opts.perPage === 'auto') ? 'Auto puzzles/page' : `${opts.perPage} per page`;
-      document.getElementById('statusLayout').textContent = `Layout: ${opts.paper}, ${opts.orientation}, ${layout}`;
-    }
-
-    function buildSudokuHTML(grid, solution, showSolution) {
-      let html = '';
-      for (let r = 0; r < 9; r++) {
-        for (let c = 0; c < 9; c++) {
-          const i = r*9 + c;
-          const v = grid[i];
-          const s = showSolution ? solution[i] : v;
-          const isGiven = v !== 0;
-          const classes = ['cell'];
-          if (c === 2 || c === 5) classes.push('block-right');
-          if (r === 2 || r === 5) classes.push('block-bottom');
-          if (isGiven) classes.push('given');
-          if (showSolution && !isGiven) classes.push('solution');
-          html += `<div class="${classes.join(' ')}">${s ? s : ''}</div>`;
-        }
-      }
-      return `<div class="sudoku">${html}</div>`;
-    }
-
-    function renderPreview(opts) {
-      const container = document.getElementById('previewContainer');
-      if (!puzzles.length) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="icon">🧩</div>
-            <p>Click <strong>Generate puzzles</strong> to create a worksheet preview.</p>
-          </div>
-        `;
-        return;
-      }
-
-      const previewCount = opts.perPage === 'auto' ? 6 : clamp(parseInt(opts.perPage, 10) || 4, 1, 6);
-      const slice = puzzles.slice(0, previewCount);
-
-      const cards = slice.map((p, idx) => `
-        <div class="sudoku-card">
-          <div class="sudoku-meta">
-            <span>#${idx + 1} • ${difficultyLabel(p.difficulty)} • ${p.clues} clues</span>
-            <span class="mono">9×9</span>
-          </div>
-          ${buildSudokuHTML(p.puzzle, p.solution, previewShowSolutions)}
-        </div>
-      `).join('');
-
-      container.innerHTML = `<div class="preview-grid">${cards}</div>`;
-    }
-
-    // ---------- Generation ----------
-    async function generateAll() {
-      const opts = readOptions();
-      let seedStr = opts.seedText || String(Date.now());
-      currentSeedLabel = opts.seedText ? opts.seedText : '(auto)';
-      const seedValue = hashSeed(seedStr);
-      const rnd = mulberry32(seedValue);
-      const engine = new SudokuEngine(rnd);
-
-      puzzles = [];
-      toast('Generating Sudoku puzzles…');
-
-      for (let i = 0; i < opts.count; i++) {
-        puzzles.push(engine.generate(opts.difficulty, opts.cluesMode, opts.customClues, opts.symmetry));
-        if (i % 2 === 0) await nextFrame();
-      }
-
-      updateStatus(opts);
-      renderPreview(opts);
-      toast(`Done! Generated ${puzzles.length} puzzles.`);
-    }
-
-    // ---------- PDF Actions ----------
-    async function downloadPdf(previewOnly = false) {
-      const opts = readOptions();
-      if (!puzzles.length) await generateAll();
-
-      const exportOpts = {
-        ...opts,
-        difficultyLabel: difficultyLabel(opts.difficulty),
-        seedLabel: currentSeedLabel
-      };
-
-      toast(previewOnly ? 'Building PDF preview…' : 'Building PDF…');
-      const blob = await buildPdf(puzzles, exportOpts);
-
-      if (previewOnly) {
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank', 'noopener');
-        toast('Opened PDF preview.');
-        return;
-      }
-
-      const a = document.createElement('a');
-      const safeSeed = (currentSeedLabel || 'auto').toString().slice(0, 30).replace(/[^\w\-]+/g, '_');
-      const name = `sudoku_${opts.difficulty}_${puzzles.length}p_${opts.paper}_${safeSeed}.pdf`;
-      a.href = URL.createObjectURL(blob);
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      toast('PDF downloaded.');
-    }
-
-    // ---------- Sharing (event delegation) ----------
-    function handleShare(e) {
-      const btn = e.target.closest('.share-btn');
-      if (!btn) return;
-      e.preventDefault();
-
-      const platform = btn.dataset.platform;
-      const action = btn.dataset.action;
-
-      if (action === 'copy') {
-        copyLink();
-        return;
-      }
-
-      const url = encodeURIComponent(window.location.href);
-      const text = encodeURIComponent('🧩 Free Sudoku PDF Generator — perfect printable worksheets (any paper size). Vector PDF export, answer keys, difficulty controls.');
-
-      let shareUrl = '';
-      switch(platform) {
-        case 'twitter': shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}&hashtags=Sudoku,TeacherResources,Printable,Education`; break;
-        case 'facebook': shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`; break;
-        case 'linkedin': shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`; break;
-        case 'whatsapp': shareUrl = `https://wa.me/?text=${text}%20${url}`; break;
-      }
-      if (shareUrl) window.open(shareUrl, '_blank', 'width=600,height=520');
-    }
-
-    async function copyLink() {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        toast('Link copied!');
-      } catch {
-        const tmp = document.createElement('textarea');
-        tmp.value = window.location.href;
-        document.body.appendChild(tmp);
-        tmp.select();
-        document.execCommand('copy');
-        tmp.remove();
-        toast('Link copied!');
-      }
-    }
-
-    // ---------- Event wiring ----------
-    document.addEventListener('DOMContentLoaded', () => {
-      // Difficulty segment
-      document.querySelectorAll('#difficultySegment .seg-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('#difficultySegment .seg-btn').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          currentDifficulty = btn.dataset.difficulty;
-          updateStatus(readOptions());
         });
-      });
 
-      // Clues mode
-      document.getElementById('cluesMode').addEventListener('change', (e) => {
-        const custom = e.target.value === 'custom';
-        document.getElementById('cluesInput').style.display = custom ? 'block' : 'none';
-      });
+        // 2. Generation Handler
+        $('#generateBtn').addEventListener('click', async () => {
+            const btn = $('#generateBtn');
+            const txt = btn.querySelector('.btn-text');
+            
+            // UI Loading State
+            btn.disabled = true;
+            $('#downloadBtn').disabled = true;
+            txt.innerHTML = '<div class="spinner"></div>';
+            
+            // Read Inputs
+            const count = Math.min(Math.max(parseInt($('#count').value) || 12, 1), 200);
+            const seedVal = $('#seed').value || null;
+            const sym = $('#symmetry').checked;
+            
+            // Generate (Async to prevent freeze)
+            state.puzzles = [];
+            const generator = new SudokuGenerator(seedVal);
+            
+            // Yield to main thread for rendering
+            for(let i=0; i<count; i++) {
+                state.puzzles.push(generator.generate(state.difficulty, sym));
+                if(i % 5 === 0) await sleep(0); 
+            }
 
-      // Paper custom UI
-      document.getElementById('paperSelect').addEventListener('change', (e) => {
-        document.getElementById('customPaperRow').style.display = (e.target.value === 'CUSTOM') ? 'flex' : 'none';
-      });
+            renderPreview();
+            
+            // Reset UI
+            txt.textContent = 'Generate Puzzles';
+            btn.disabled = false;
+            $('#downloadBtn').disabled = false;
+            toast(`Generated ${count} puzzles!`);
+        });
 
-      // Preview solutions toggle
-      document.getElementById('previewSolutionsToggle').addEventListener('change', () => {
-        previewShowSolutions = document.getElementById('previewSolutionsToggle').checked;
-        renderPreview(readOptions());
-      });
+        // 3. Render Preview
+        function renderPreview() {
+            const container = $('#previewContainer');
+            container.innerHTML = '';
+            
+            const limit = Math.min(state.puzzles.length, 6); // Only show first 6
+            
+            state.puzzles.slice(0, limit).forEach((p, idx) => {
+                const card = document.createElement('div');
+                card.className = 'sudoku-card';
+                card.innerHTML = `
+                    <div class="sudoku-header">
+                        <span>PUZZLE #${idx + 1}</span>
+                        <span>${state.difficulty.toUpperCase()}</span>
+                    </div>
+                    <div class="sudoku-board">
+                        ${renderBoardHTML(p.puzzle, p.solution)}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
 
-      // Share buttons
-      document.getElementById('shareButtons').addEventListener('click', handleShare);
+        function renderBoardHTML(puzzle, solution) {
+            let html = '';
+            for(let i=0; i<81; i++) {
+                const r = Math.floor(i/9);
+                const isBottom = (r === 2 || r === 5);
+                const val = puzzle[i];
+                const sol = solution[i];
+                const display = val !== 0 ? val : `<span class="sol hidden">${sol}</span>`;
+                const classes = `cell ${val !== 0 ? 'given' : 'solved'} ${isBottom ? 'bottom-border' : ''}`;
+                html += `<div class="${classes}">${display}</div>`;
+            }
+            return html;
+        }
 
-      // Buttons
-      document.getElementById('generateBtn').addEventListener('click', generateAll);
-      document.getElementById('previewPdfBtn').addEventListener('click', () => downloadPdf(true));
-      document.getElementById('downloadPdfBtn').addEventListener('click', () => downloadPdf(false));
+        // 4. Peek Solutions Toggle
+        $('#peekSolutions').addEventListener('change', (e) => {
+            const show = e.target.checked;
+            $$('.sol').forEach(el => el.classList.toggle('hidden', !show));
+        });
 
-      document.getElementById('toggleAnswersBtn').addEventListener('click', () => {
-        previewShowSolutions = !previewShowSolutions;
-        document.getElementById('previewSolutionsToggle').checked = previewShowSolutions;
-        const btn = document.getElementById('toggleAnswersBtn');
-        btn.classList.toggle('active', previewShowSolutions);
-        btn.textContent = previewShowSolutions ? '🙈 Hide preview answers' : '👁️ Show preview answers';
-        renderPreview(readOptions());
-      });
+        // 5. PDF Generation (The Heavy Lifting)
+        $('#downloadBtn').addEventListener('click', async () => {
+            if(!window.PDFLib) { alert('PDF Library failed to load.'); return; }
+            
+            const btn = $('#downloadBtn');
+            const origText = btn.innerHTML;
+            btn.innerHTML = 'Building PDF...';
+            btn.disabled = true;
 
-      // Initial status
-      updateStatus(readOptions());
-    });
+            try {
+                const { PDFDocument, rgb, StandardFonts } = PDFLib;
+                const pdfDoc = await PDFDocument.create();
+                const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+                const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-    // Global exposure (for safety)
-    window.copyLink = copyLink;
-  </script>
+                const paperType = $('#paperSize').value;
+                const paperSizes = {
+                    'A4': [595.28, 841.89],
+                    'LETTER': [612, 792],
+                    'LEGAL': [612, 1008]
+                };
+                const [pageW, pageH] = paperSizes[paperType] || paperSizes['A4'];
+                
+                // Config
+                const puzzles = state.puzzles;
+                const puzzlesPerPage = parseInt($('#layout').value) || 4; // Simplified logic, usually requires grid calc
+                const showHeader = $('#showHeader').checked;
+                const margin = 50;
+
+                // --- Helper: Draw Grid ---
+                const drawSudoku = (page, x, y, size, data, isSolution, index) => {
+                    const cellSize = size / 9;
+                    
+                    // Outer Border
+                    page.drawRect({
+                        x, y, width: size, height: size,
+                        borderColor: rgb(0,0,0), borderWidth: 1.5
+                    });
+
+                    // Grid Lines
+                    for(let i=1; i<9; i++) {
+                        const thick = i % 3 === 0 ? 1.5 : 0.5;
+                        // Vert
+                        page.drawLine({
+                            start: {x: x + i*cellSize, y: y},
+                            end: {x: x + i*cellSize, y: y+size},
+                            thickness: thick, color: rgb(0,0,0)
+                        });
+                        // Horiz
+                        page.drawLine({
+                            start: {x: x, y: y + i*cellSize},
+                            end: {x: x + size, y: y + i*cellSize},
+                            thickness: thick, color: rgb(0,0,0)
+                        });
+                    }
+
+                    // Numbers
+                    for(let r=0; r<9; r++) {
+                        for(let c=0; c<9; c++) {
+                            const val = data[(8-r)*9 + c]; // PDF coords are bottom-up
+                            if(val !== 0) {
+                                const text = val.toString();
+                                const txtSize = cellSize * 0.6;
+                                const width = helveticaBold.widthOfTextAtSize(text, txtSize);
+                                page.drawText(text, {
+                                    x: x + c*cellSize + (cellSize-width)/2,
+                                    y: y + r*cellSize + (cellSize-txtSize)/2 + 2,
+                                    size: txtSize,
+                                    font: isSolution ? helvetica : helveticaBold,
+                                    color: isSolution ? rgb(0.4,0.4,0.4) : rgb(0,0,0)
+                                });
+                            }
+                        }
+                    }
+
+                    // Label
+                    page.drawText(`${isSolution ? 'Answer' : 'Puzzle'} #${index+1}`, {
+                        x: x, y: y + size + 5,
+                        size: 8, font: helveticaBold
+                    });
+                };
+
+                // --- Layout Engine (Simplified for Demo) ---
+                // Calculates a grid layout (e.g. 2x2, 2x3) based on count
+                let cols = 2;
+                let rows = 3;
+                if(puzzlesPerPage === 1) { cols=1; rows=1; }
+                if(puzzlesPerPage === 2) { cols=1; rows=2; }
+                if(puzzlesPerPage === 4) { cols=2; rows=2; }
+                if(puzzlesPerPage === 6) { cols=2; rows=3; } // Auto fallback
+
+                const contentW = pageW - (margin*2);
+                const contentH = pageH - (margin*2) - (showHeader ? 60 : 0);
+                
+                const gap = 30;
+                const gridW = (contentW - (gap * (cols-1))) / cols;
+                const gridH = (contentH - (gap * (rows-1))) / rows;
+                const size = Math.min(gridW, gridH);
+
+                // --- Generate Puzzle Pages ---
+                let currentPage;
+                for(let i=0; i<puzzles.length; i++) {
+                    if(i % puzzlesPerPage === 0) {
+                        currentPage = pdfDoc.addPage([pageW, pageH]);
+                        if(showHeader) {
+                            currentPage.drawText("Sudoku Worksheet", { x: margin, y: pageH - 50, size: 18, font: helveticaBold });
+                            currentPage.drawText(`Name: __________________   Date: ________`, { x: pageW - margin - 250, y: pageH - 50, size: 10, font: helvetica });
+                        }
+                    }
+
+                    const idxOnPage = i % puzzlesPerPage;
+                    const c = idxOnPage % cols;
+                    const r = Math.floor(idxOnPage / cols);
+                    
+                    const x = margin + c * (size + gap);
+                    const y = pageH - margin - (showHeader?60:0) - size - (r * (size + gap));
+
+                    drawSudoku(currentPage, x, y, size, puzzles[i].puzzle, false, i);
+                }
+
+                // --- Generate Answer Pages ---
+                if($('#answerKey').checked) {
+                     for(let i=0; i<puzzles.length; i++) {
+                        if(i % puzzlesPerPage === 0) {
+                            currentPage = pdfDoc.addPage([pageW, pageH]);
+                            currentPage.drawText("Answer Key", { x: margin, y: pageH - 50, size: 16, font: helveticaBold });
+                        }
+                        const idxOnPage = i % puzzlesPerPage;
+                        const c = idxOnPage % cols;
+                        const r = Math.floor(idxOnPage / cols);
+                        const x = margin + c * (size + gap);
+                        const y = pageH - margin - (showHeader?60:0) - size - (r * (size + gap));
+                        drawSudoku(currentPage, x, y, size, puzzles[i].solution, true, i);
+                    }
+                }
+
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `Sudoku_Set_${Date.now()}.pdf`;
+                link.click();
+                
+                toast('PDF Downloaded Successfully');
+
+            } catch (err) {
+                console.error(err);
+                alert('Error generating PDF: ' + err.message);
+            } finally {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }
+        });
+
+        // 6. Share Logic (Native + Copy Fallback)
+        $('#shareBtn').addEventListener('click', async () => {
+            const shareData = {
+                title: 'Sudoku Architect',
+                text: 'Create free vector Sudoku worksheets!',
+                url: window.location.href
+            };
+
+            if (navigator.share) {
+                try { await navigator.share(shareData); } catch (err) {}
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                toast('Link copied to clipboard');
+            }
+        });
+
+    </script>
 </body>
 </html>

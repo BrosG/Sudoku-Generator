@@ -14,7 +14,7 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Sudoku PDF Generator by BrosG">
+    <meta property="og:title" content="Sudoku Generator by BrosG">
     <meta property="og:description" content="Free vector PDF Sudoku generator. Print-ready worksheets for teachers and puzzle lovers.">
     <meta property="twitter:card" content="summary_large_image">
 
@@ -268,10 +268,8 @@
         
         .cell:nth-child(3n) { border-right: 2px solid var(--text-main); }
         .cell:nth-child(9n) { border-right: none; }
-        /* Thick bottom borders for blocks */
-        .cell:nth-child(n+19):nth-child(-n+27),
-        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid var(--text-main); }
-        .cell:nth-child(n+73) { border-bottom: none; }
+        /* Thick bottom borders for blocks - using reliable selectors */
+        .cell.block-bottom { border-bottom: 2px solid var(--text-main); }
 
         .cell.given { font-weight: 800; }
         .cell.solved { color: var(--primary); font-weight: 500; }
@@ -442,7 +440,7 @@
         </div>
     </div>
 
-    <!-- FOOTER (RESTORED GBROS LINKS) -->
+    <!-- FOOTER -->
     <footer class="app-footer">
         <div class="footer-content">
             <a href="https://github.com/BrosG" target="_blank" class="brand-link">
@@ -486,7 +484,6 @@
         // --- SUDOKU ENGINE ---
         class SudokuGenerator {
             constructor(seedStr) {
-                // Simple seeded random (mulberry32)
                 let seed = seedStr ? this.hash(seedStr) : Date.now();
                 this.random = () => {
                     let t = seed += 0x6D2B79F5;
@@ -505,32 +502,28 @@
             }
 
             generate(difficulty, symmetry) {
-                // 1. Solve a full grid
                 const board = new Uint8Array(81);
                 this.solve(board);
                 const solution = new Uint8Array(board);
                 
-                // 2. Determine target clues
                 let minClues, maxClues;
                 switch(difficulty) {
                     case 'expert': minClues = 22; maxClues = 26; break;
                     case 'hard':   minClues = 27; maxClues = 32; break;
                     case 'medium': minClues = 33; maxClues = 39; break;
-                    default:       minClues = 40; maxClues = 50; // Easy
+                    default:       minClues = 40; maxClues = 50;
                 }
                 
-                // 3. Remove digits
                 const puzzle = new Uint8Array(solution);
                 const indices = Array.from({length:81}, (_,i)=>i);
                 
-                // Shuffle indices
                 for(let i=80; i>0; i--) {
                     const j = Math.floor(this.random() * (i+1));
                     [indices[i], indices[j]] = [indices[j], indices[i]];
                 }
 
                 let currentClues = 81;
-                const target = minClues + Math.floor(this.random() * (maxClues - minClues));
+                const target = minClues + Math.floor(this.random() * (maxClues - minClues + 1));
 
                 for(const idx of indices) {
                     if(currentClues <= target) break;
@@ -542,18 +535,9 @@
                         pairIdx = (8-r)*9 + (8-c);
                     }
 
-                    const val = puzzle[idx];
-                    const valPair = pairIdx !== -1 ? puzzle[pairIdx] : 0;
-
                     puzzle[idx] = 0;
                     if(pairIdx !== -1 && pairIdx !== idx) puzzle[pairIdx] = 0;
 
-                    // Check if unique solution still exists (simplified heuristic for speed)
-                    // Real DLX solver too heavy for UI thread JS without workers.
-                    // We assume correctness based on high density of remaining clues for easy/med.
-                    // For expert, we trust the removal process.
-                    
-                    // Count removed
                     currentClues--;
                     if(pairIdx !== -1 && pairIdx !== idx) currentClues--;
                 }
@@ -562,7 +546,6 @@
             }
 
             solve(grid) {
-                // Randomized Backtracking
                 const empty = grid.indexOf(0);
                 if (empty === -1) return true;
 
@@ -570,7 +553,6 @@
                 const c = empty%9;
                 const nums = [1,2,3,4,5,6,7,8,9];
                 
-                // Shuffle nums
                 for(let i=8; i>0; i--) {
                     const j = Math.floor(this.random() * (i+1));
                     [nums[i], nums[j]] = [nums[j], nums[i]];
@@ -587,9 +569,15 @@
             }
 
             isValid(grid, r, c, n) {
-                for(let i=0; i<9; i++) if(grid[r*9+i] === n || grid[i*9+c] === n) return false;
+                for(let i=0; i<9; i++) {
+                    if(grid[r*9+i] === n || grid[i*9+c] === n) return false;
+                }
                 const br = Math.floor(r/3)*3, bc = Math.floor(c/3)*3;
-                for(let i=0; i<3; i++) for(let j=0; j<3; j++) if(grid[(br+i)*9+bc+j] === n) return false;
+                for(let i=0; i<3; i++) {
+                    for(let j=0; j<3; j++) {
+                        if(grid[(br+i)*9 + (bc+j)] === n) return false;
+                    }
+                }
                 return true;
             }
         }
@@ -607,9 +595,8 @@
             const [pageW, pageH] = PAPER[cfg.paper];
             const margin = 40;
             
-            // Layout Logic
             const perPage = parseInt(cfg.perPage);
-            let cols = 2, rows = 3; // default 6
+            let cols = 2, rows = 3;
             if(perPage === 1) { cols=1; rows=1; }
             if(perPage === 2) { cols=1; rows=2; }
             if(perPage === 4) { cols=2; rows=2; }
@@ -624,12 +611,11 @@
             const cellH = (contentH - (gap * (rows-1))) / rows;
             const gridSize = Math.min(cellW, cellH);
 
-            // Draw Helper
             const drawSudoku = (page, x, y, size, data, isSol, label) => {
                 page.drawRectangle({
                     x, y, width: size, height: size,
                     borderColor: rgb(0,0,0), borderWidth: 1.5,
-                    color: rgb(1,1,1) // White fill
+                    color: rgb(1,1,1)
                 });
 
                 const cellS = size / 9;
@@ -637,15 +623,19 @@
                 // Grid Lines
                 for(let i=1; i<9; i++) {
                     const thick = i%3===0 ? 1.5 : 0.5;
-                    // Vert
+                    // Vertical
                     page.drawLine({
-                        start: {x: x+i*cellS, y}, end: {x: x+i*cellS, y+size},
-                        thickness: thick, color: rgb(0,0,0)
+                        start: { x: x + i*cellS, y: y },
+                        end:   { x: x + i*cellS, y: y + size },
+                        thickness: thick, 
+                        color: rgb(0,0,0)
                     });
-                    // Horiz
+                    // Horizontal
                     page.drawLine({
-                        start: {x, y: y+i*cellS}, end: {x: x+size, y: y+i*cellS},
-                        thickness: thick, color: rgb(0,0,0)
+                        start: { x: x, y: y + i*cellS },
+                        end:   { x: x + size, y: y + i*cellS },
+                        thickness: thick, 
+                        color: rgb(0,0,0)
                     });
                 }
 
@@ -657,9 +647,8 @@
                     const r = Math.floor(i/9);
                     const c = i%9;
                     
-                    // PDF Coords: Bottom-Left is 0,0. 
                     const txt = val.toString();
-                    const fs = cellS * 0.6;
+                    const fs = cellS * 0.62;
                     const w = fontBold.widthOfTextAtSize(txt, fs);
                     const h = fontBold.heightAtSize(fs);
                     
@@ -667,16 +656,19 @@
                     const txtY = y + size - (r+1)*cellS + (cellS - h)/2 + 2;
 
                     page.drawText(txt, {
-                        x: txtX, y: txtY, size: fs,
+                        x: txtX, 
+                        y: txtY, 
+                        size: fs,
                         font: isSol ? fontReg : fontBold,
                         color: isSol ? rgb(0.4,0.4,0.4) : rgb(0,0,0)
                     });
                 }
 
-                // Label
                 page.drawText(label, {
-                    x, y: y + size + 6,
-                    size: 9, font: fontBold
+                    x: x, 
+                    y: y + size + 8,
+                    size: 9, 
+                    font: fontBold
                 });
             };
 
@@ -686,41 +678,52 @@
                     const page = doc.addPage([pageW, pageH]);
                     const subset = list.slice(p*perPage, (p+1)*perPage);
 
-                    // Header
                     if(cfg.headers) {
                         const title = isSol ? "Answer Key" : "Sudoku Worksheet";
-                        page.drawText(title, { x: margin, y: pageH - margin - 14, size: 16, font: fontBold });
+                        page.drawText(title, { 
+                            x: margin, 
+                            y: pageH - margin - 14, 
+                            size: 16, 
+                            font: fontBold 
+                        });
                         if(!isSol) {
-                            page.drawText(`Difficulty: ${cfg.diff.toUpperCase()}`, { x: margin, y: pageH - margin - 30, size: 10, font: fontReg, color: rgb(0.5,0.5,0.5) });
+                            page.drawText(`Difficulty: ${cfg.diff.toUpperCase()}`, { 
+                                x: margin, 
+                                y: pageH - margin - 30, 
+                                size: 10, 
+                                font: fontReg, 
+                                color: rgb(0.5,0.5,0.5) 
+                            });
                             page.drawText("Name: ___________________  Date: ___________", {
-                                x: pageW - margin - 220, y: pageH - margin - 14,
-                                size: 10, font: fontReg
+                                x: pageW - margin - 220, 
+                                y: pageH - margin - 14,
+                                size: 10, 
+                                font: fontReg
                             });
                         }
                     }
 
-                    // Grid Layout
                     subset.forEach((grid, idx) => {
-                        const i = idx; 
-                        const col = i % cols;
-                        const row = Math.floor(i / cols);
+                        const col = idx % cols;
+                        const row = Math.floor(idx / cols);
                         
-                        // Pos calc
-                        const blockX = margin + col*(gridSize+gap) + (contentW - (cols*gridSize + (cols-1)*gap))/2;
+                        const blockX = margin + col*(gridSize + gap) + (contentW - (cols*gridSize + (cols-1)*gap))/2;
                         const startY = pageH - margin - headerH;
                         const blockY = startY - (row+1)*gridSize - row*gap;
                         
-                        const globalIdx = (p * perPage) + i + 1;
+                        const globalIdx = (p * perPage) + idx + 1;
                         const puzzleLabel = `${isSol ? 'Ans' : 'Puz'} #${globalIdx}`;
                         drawSudoku(page, blockX, blockY, gridSize, grid, isSol, puzzleLabel);
                     });
 
-                    // Footer
-                    const footer = `Generated by BrosG - Page ${p+1} ${isSol?'(Answers)':''}`;
+                    const footer = `Generated by BrosG — Page ${p+1} ${isSol?'(Solutions)':''}`;
                     const fw = fontReg.widthOfTextAtSize(footer, 8);
                     page.drawText(footer, {
-                        x: (pageW - fw)/2, y: margin,
-                        size: 8, font: fontReg, color: rgb(0.6,0.6,0.6)
+                        x: (pageW - fw)/2, 
+                        y: margin,
+                        size: 8, 
+                        font: fontReg, 
+                        color: rgb(0.6,0.6,0.6)
                     });
                 }
             };
@@ -734,17 +737,17 @@
         // --- APP LOGIC ---
         document.addEventListener('DOMContentLoaded', () => {
             
-            // Diff Toggle
-            $$('.seg-btn').forEach(b => b.onclick = (e) => {
-                $$('.seg-btn').forEach(btn=>btn.classList.remove('active'));
-                e.target.classList.add('active');
-                state.difficulty = e.target.dataset.diff;
+            // Difficulty buttons
+            $$('.seg-btn').forEach(b => {
+                b.onclick = () => {
+                    $$('.seg-btn').forEach(btn => btn.classList.remove('active'));
+                    b.classList.add('active');
+                    state.difficulty = b.dataset.diff;
+                };
             });
 
-            // Preview Sol Toggle
-            $('#previewSol').onchange = (e) => {
-                renderPreview();
-            };
+            // Preview toggle
+            $('#previewSol').onchange = renderPreview;
 
             // Generate
             $('#generateBtn').onclick = async () => {
@@ -752,42 +755,42 @@
                 state.generating = true;
                 
                 const btn = $('#generateBtn');
+                const originalText = btn.innerHTML;
                 btn.innerHTML = `<div class="spinner"></div> Generating...`;
                 btn.disabled = true;
                 $('#downloadBtn').disabled = true;
 
-                // Config
-                const count = Math.min(Math.max(parseInt($('#count').value, 10) || 12, 1), 100);
-                const seed = $('#seed').value;
+                const count = Math.min(Math.max(parseInt($('#count').value) || 12, 1), 100);
+                const seed = $('#seed').value.trim();
                 const sym = $('#symmetry').checked;
 
                 const gen = new SudokuGenerator(seed);
                 state.puzzles = [];
 
-                // Async generate
-                for(let i=0; i<count; i++) {
+                for(let i = 0; i < count; i++) {
                     state.puzzles.push(gen.generate(state.difficulty, sym));
-                    if(i%5===0) await sleep(0); // Yield to main thread
+                    if(i % 4 === 0) await sleep(0);
                 }
 
                 renderPreview();
                 
-                btn.innerHTML = `<span>Generate Puzzles</span>`;
+                btn.innerHTML = originalText;
                 btn.disabled = false;
                 $('#downloadBtn').disabled = false;
-                $('#status').textContent = `${count} Generated (${state.difficulty})`;
-                toast(`Generated ${count} puzzles!`);
+                $('#status').textContent = `${count} puzzles • ${state.difficulty}`;
+                toast(`✅ ${count} puzzles generated!`);
                 state.generating = false;
             };
 
             // Download
             $('#downloadBtn').onclick = async () => {
                 const btn = $('#downloadBtn');
+                const originalText = btn.innerHTML;
                 btn.innerHTML = `<div class="spinner"></div> Building PDF...`;
                 btn.disabled = true;
 
                 try {
-                    await sleep(50); // Allow UI to update
+                    await sleep(30);
                     const pdfBytes = await createPDF(state.puzzles, {
                         paper: $('#paper').value,
                         perPage: $('#perPage').value,
@@ -796,36 +799,41 @@
                         diff: state.difficulty
                     });
 
-                    const blob = new Blob([pdfBytes], {type: 'application/pdf'});
+                    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = `BrosG_Sudoku_${state.difficulty}.pdf`;
+                    a.download = `BrosG_Sudoku_${state.difficulty}_${new Date().toISOString().slice(0,10)}.pdf`;
+                    document.body.appendChild(a);
                     a.click();
-                    URL.revokeObjectURL(url); // Clean up
-                    toast('PDF Downloaded!');
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    toast('📄 PDF downloaded successfully!');
                 } catch(e) {
                     console.error(e);
-                    toast('Error: ' + e.message);
+                    toast('❌ PDF generation failed: ' + e.message);
                 }
                 
-                btn.innerHTML = `<span>Download PDF</span>`;
+                btn.innerHTML = originalText;
                 btn.disabled = false;
             };
 
             // Share
             $('#shareBtn').onclick = async () => {
-                const data = { title: 'Sudoku Generator', text: 'Free vector Sudoku PDF generator by BrosG', url: window.location.href };
+                const data = {
+                    title: 'Sudoku PDF Generator',
+                    text: 'Free printable Sudoku worksheets by BrosG',
+                    url: window.location.href
+                };
                 try {
-                    if(navigator.share) {
-                        await navigator.share(data);
-                    } else {
+                    if (navigator.share) await navigator.share(data);
+                    else {
                         await navigator.clipboard.writeText(window.location.href);
-                        toast('Link copied to clipboard!');
+                        toast('🔗 Link copied to clipboard!');
                     }
                 } catch(err) {
-                    console.error('Share/Copy failed:', err);
-                    toast('Could not copy link.');
+                    toast('Could not share/copy link');
                 }
             };
         });
@@ -834,11 +842,12 @@
             const container = $('#previewContainer');
             container.innerHTML = '';
             
-            if (state.puzzles.length === 0) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:4rem; color:var(--text-muted);">
-                            <div style="font-size:3rem; margin-bottom:1rem;">🧩</div>
-                            <p>Select settings and click <strong>Generate Puzzles</strong></p>
-                        </div>`;
+            if (!state.puzzles.length) {
+                container.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:4rem; color:var(--text-muted);">
+                        <div style="font-size:3rem; margin-bottom:1rem;">🧩</div>
+                        <p>Select settings and click <strong>Generate Puzzles</strong></p>
+                    </div>`;
                 return;
             }
 
@@ -846,17 +855,23 @@
             const limit = Math.min(state.puzzles.length, 12);
 
             state.puzzles.slice(0, limit).forEach((p, idx) => {
-                let html = `<div class="preview-card">
-                    <div class="preview-meta"><span>#${idx+1}</span><span>${state.difficulty.toUpperCase()}</span></div>
-                    <div class="sudoku-board">`;
+                let html = `
+                    <div class="preview-card">
+                        <div class="preview-meta">
+                            <span>#${idx+1}</span>
+                            <span>${state.difficulty.toUpperCase()}</span>
+                        </div>
+                        <div class="sudoku-board">`;
                 
-                for(let i=0; i<81; i++) {
+                for(let i = 0; i < 81; i++) {
                     const val = p.puzzle[i];
                     const sol = p.solution[i];
                     const display = val !== 0 ? val : (showSol ? sol : '');
-                    const cls = `cell ${val!==0?'given':(showSol?'solved':'')}`;
+                    const isGiven = val !== 0;
+                    const cls = `cell ${isGiven ? 'given' : (showSol ? 'solved' : '')} ${ (i >= 18 && i <= 26) || (i >= 45 && i <= 53) ? 'block-bottom' : '' }`;
                     html += `<div class="${cls}">${display}</div>`;
                 }
+                
                 html += `</div></div>`;
                 container.innerHTML += html;
             });

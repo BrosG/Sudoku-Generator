@@ -52,6 +52,8 @@
                 --text-muted: #94a3b8;
                 --border: #334155;
             }
+            .sudoku-board { background: #1e293b; }
+            .cell { border-color: rgba(255,255,255,0.1); color: #f1f5f9; }
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -254,8 +256,7 @@
             background: #fff;
             aspect-ratio: 1;
         }
-        .dark .sudoku-board { background: #1e293b; }
-
+        
         .cell {
             display: flex; align-items: center; justify-content: center;
             font-family: var(--font-mono);
@@ -263,9 +264,6 @@
             color: #1e293b;
             border-right: 1px solid rgba(0,0,0,0.1);
             border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
-        @media (prefers-color-scheme: dark) {
-            .cell { border-color: rgba(255,255,255,0.1); color: #f1f5f9; }
         }
         
         .cell:nth-child(3n) { border-right: 2px solid var(--text-main); }
@@ -628,7 +626,6 @@
 
             // Draw Helper
             const drawSudoku = (page, x, y, size, data, isSol, label) => {
-                // FIXED: drawRect -> drawRectangle
                 page.drawRectangle({
                     x, y, width: size, height: size,
                     borderColor: rgb(0,0,0), borderWidth: 1.5,
@@ -661,7 +658,6 @@
                     const c = i%9;
                     
                     // PDF Coords: Bottom-Left is 0,0. 
-                    // To draw grid top-down: Y = y + size - (r+1)*cellS
                     const txt = val.toString();
                     const fs = cellS * 0.6;
                     const w = fontBold.widthOfTextAtSize(txt, fs);
@@ -712,11 +708,11 @@
                         // Pos calc
                         const blockX = margin + col*(gridSize+gap) + (contentW - (cols*gridSize + (cols-1)*gap))/2;
                         const startY = pageH - margin - headerH;
-                        // Draw from top down
                         const blockY = startY - (row+1)*gridSize - row*gap;
                         
-                        const globalIdx = p*perPage + i + 1;
-                        drawSudoku(page, blockX, blockY, gridSize, grid, isSol, `${isSol?'Ans':'Puz'} #${globalIdx}`);
+                        const globalIdx = (p * perPage) + i + 1;
+                        const puzzleLabel = `${isSol ? 'Ans' : 'Puz'} #${globalIdx}`;
+                        drawSudoku(page, blockX, blockY, gridSize, grid, isSol, puzzleLabel);
                     });
 
                     // Footer
@@ -761,7 +757,7 @@
                 $('#downloadBtn').disabled = true;
 
                 // Config
-                const count = Math.min(Math.max($('#count').value||12, 1), 200);
+                const count = Math.min(Math.max(parseInt($('#count').value, 10) || 12, 1), 100);
                 const seed = $('#seed').value;
                 const sym = $('#symmetry').checked;
 
@@ -771,7 +767,7 @@
                 // Async generate
                 for(let i=0; i<count; i++) {
                     state.puzzles.push(gen.generate(state.difficulty, sym));
-                    if(i%5===0) await sleep(0);
+                    if(i%5===0) await sleep(0); // Yield to main thread
                 }
 
                 renderPreview();
@@ -791,7 +787,7 @@
                 btn.disabled = true;
 
                 try {
-                    await sleep(50); // Render UI
+                    await sleep(50); // Allow UI to update
                     const pdfBytes = await createPDF(state.puzzles, {
                         paper: $('#paper').value,
                         perPage: $('#perPage').value,
@@ -806,10 +802,11 @@
                     a.href = url;
                     a.download = `BrosG_Sudoku_${state.difficulty}.pdf`;
                     a.click();
+                    URL.revokeObjectURL(url); // Clean up
                     toast('PDF Downloaded!');
                 } catch(e) {
                     console.error(e);
-                    alert('Error: ' + e.message);
+                    toast('Error: ' + e.message);
                 }
                 
                 btn.innerHTML = `<span>Download PDF</span>`;
@@ -819,10 +816,16 @@
             // Share
             $('#shareBtn').onclick = async () => {
                 const data = { title: 'Sudoku Generator', text: 'Free vector Sudoku PDF generator by BrosG', url: window.location.href };
-                if(navigator.share) await navigator.share(data);
-                else {
-                    navigator.clipboard.writeText(window.location.href);
-                    toast('Link copied!');
+                try {
+                    if(navigator.share) {
+                        await navigator.share(data);
+                    } else {
+                        await navigator.clipboard.writeText(window.location.href);
+                        toast('Link copied to clipboard!');
+                    }
+                } catch(err) {
+                    console.error('Share/Copy failed:', err);
+                    toast('Could not copy link.');
                 }
             };
         });
@@ -831,6 +834,14 @@
             const container = $('#previewContainer');
             container.innerHTML = '';
             
+            if (state.puzzles.length === 0) {
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:4rem; color:var(--text-muted);">
+                            <div style="font-size:3rem; margin-bottom:1rem;">🧩</div>
+                            <p>Select settings and click <strong>Generate Puzzles</strong></p>
+                        </div>`;
+                return;
+            }
+
             const showSol = $('#previewSol').checked;
             const limit = Math.min(state.puzzles.length, 12);
 
